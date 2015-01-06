@@ -1,0 +1,1 @@
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="WcfServiceForIOS.ServiceForIOSFile" CodeBehind="ServiceForIOSFile.svc.cs" %>
