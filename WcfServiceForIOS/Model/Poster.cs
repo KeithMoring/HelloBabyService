@@ -33,5 +33,7 @@ namespace WcfServiceForIOS.Model
         public DateTime PostTime { get;set;}
         [DataMember]
         public string PosterID { get; set; }
+        [DataMember]
+        public string UserPhoto { get; set; }
     }
 }

@@ -9,6 +9,7 @@ using System.IO;
 using WcfServiceForIOS.Model;
 using WcfServiceForIOS.Tools;
 using System.Drawing;
+using System.Text.RegularExpressions;
 
 namespace WcfServiceForIOS
 {
@@ -17,26 +18,33 @@ namespace WcfServiceForIOS
     public class ServiceForIOSFile : IServiceForIOSFile
     {
         #region save image from ios or get image to ios
-        public void SaveImage(Stream request)
+        static string userPhotoPath = @"imagesUpLoad/UserPhoto";
+        
+        public string SaveImage(Stream request)
         {
 
             MultipartParser parser = new MultipartParser(request);
+            string mapFilePath = "E";
             if (parser != null && parser.Success) {
-                WcfLog.Log(parser.Filename+"|"+parser.ContentType);
+                //WcfLog.Log(parser.Filename+"|"+parser.ContentType);
                 byte[] imagebyte = parser.FileContents;
-                string filenamepath = MapPath.GetfileName(parser.Filename,"imagesUpLoad");
-                WcfLog.Log(filenamepath);
+                string filenamepath = MapPath.GetfileName(parser.Filename, userPhotoPath);
+               
                 FileStream file = null;
                 try
                 {
                     file = new FileStream(filenamepath, FileMode.Create, FileAccess.Write, FileShare.None);
                     file.Write(imagebyte, 0, imagebyte.Length);
-
+                    string userid = GetIdFromFilename(parser.Filename);
+                    mapFilePath = userPhotoPath + @"/" + parser.Filename;
+                    UpdateUserPhotoUrl(mapFilePath,userid);
+                    WcfLog.Log("success: "+filenamepath);
+                    return mapFilePath;
                 }
                 catch (Exception e)
                 {
 
-                    WcfLog.Log(logLevel.Error, e);
+                    WcfLog.Log(logLevel.Error, e);                    
                 }
                 finally {
                     if (file != null)
@@ -44,16 +52,35 @@ namespace WcfServiceForIOS
                         file.Close();
                         request.Close();
                     }
+                    
                 }
-
+               
             }
 
-
+            return mapFilePath;
         }
 
+        public void UpdateUserPhotoUrl(string mapFilePath,string userId) {
+            sqlparameters r_para = new sqlparameters("p_relative_url",mapFilePath);
+            sqlparameters r_userid = new sqlparameters("p_user_id",userId);
+            List<sqlparameters> paras = new List<sqlparameters>();
+            paras.AddParas(r_para, r_userid);
+            DataConn con = new DataConn();
+            con.StroedGet("pkg_update_user_photo",paras);
+        }
 
-
-
+        public string GetIdFromFilename(string filename) {
+            Regex re = new Regex(@"_(\d+)\.");
+            Match t= re.Match(filename);
+            if (t.Success)
+            {
+                return t.Groups[1].Value.Trim();
+            }
+            else {
+                return string.Empty;
+            }
+           
+        }
 
 
 

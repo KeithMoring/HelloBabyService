@@ -14,8 +14,9 @@ namespace WcfServiceForIOS
    public interface IServiceForIOSImage
     {
         [OperationContract]
-        [WebInvoke(Method = "POST", UriTemplate = "UploadFile")]
-        void SaveImage(Stream request);
+        [WebInvoke(Method = "POST", UriTemplate = "UploadFile",BodyStyle=WebMessageBodyStyle.Wrapped,ResponseFormat=WebMessageFormat.Json
+            )]
+        string SaveImage(Stream request);
 
         
     }
