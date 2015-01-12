@@ -120,6 +120,7 @@
     <Compile Include="Model\MultipartParser.cs" />
     <Compile Include="Model\Poster.cs" />
     <Compile Include="Model\Users.cs" />
+    <Compile Include="Model\UserVotePoster.cs" />
     <Compile Include="Model\VoteAcion.cs" />
     <Compile Include="ServiceForIOSFile.svc.cs">
       <DependentUpon>ServiceForIOSFile.svc</DependentUpon>
@@ -131,6 +132,7 @@
     <Compile Include="Tools\DataTableToObject.cs" />
     <Compile Include="Tools\ExteneClassMeathod.cs" />
     <Compile Include="Tools\GetDirectory.cs" />
+    <Compile Include="Tools\loginCheck.cs" />
     <Compile Include="Tools\MapPath.cs" />
     <Compile Include="Tools\ObjectToJson.cs" />
     <Compile Include="WcfLog.cs" />

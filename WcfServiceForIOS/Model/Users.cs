@@ -30,7 +30,7 @@ namespace WcfServiceForIOS.Model
             set { sex = value; }
         }
         [DataMember]
-        public string UserId { get; set; }
+        public int UserId { get; set; }
         [DataMember]
         public string Email { get; set; }
         [DataMember]
@@ -42,6 +42,7 @@ namespace WcfServiceForIOS.Model
         [DataMember]
         public string LoginStatus { get;set;}
 
-
+        [DataMember]
+        public string Token { get;set;}
     }
 }

@@ -25,13 +25,20 @@ namespace WcfServiceForIOS
             {
                 try
                 {
-                    List<sqlparameters> paras = new List<sqlparameters>();
-                    sqlparameters para_user_id = new sqlparameters("P_User_ID", newPoster.User_ID);
-                    sqlparameters para_poster = new sqlparameters("P_Poster_Input", newPoster.PosterInput);
+                    if (loginCheck.TokenCheck(newPoster.User_ID,newPoster.Token))
+                    {
+                        List<sqlparameters> paras = new List<sqlparameters>();
+                        sqlparameters para_user_id = new sqlparameters("P_User_ID", newPoster.User_ID);
+                        sqlparameters para_poster = new sqlparameters("P_Poster_Input", newPoster.PosterInput);
 
-                    paras.AddParas(para_poster, para_user_id);
-                    DataConn con = new DataConn();
-                    con.StroedGet("PKG_Poster_New", paras);
+
+                        paras.AddParas(para_poster, para_user_id);
+                        DataConn con = new DataConn();
+                        con.StroedGet("PKG_Poster_New", paras);
+                    }
+                    else {
+                        return ConnectStatus.ActionUnAuthorize;
+                    }
                 }
                 catch (Exception e)
                 {
@@ -194,12 +201,19 @@ namespace WcfServiceForIOS
             List<sqlparameters> parasCancel = new List<sqlparameters> { para_user_id, para_poster_id, para_voteCancel };
             conn.StroedGet("PKG_User_Vote", parasCancel);
         }
-        public ConnectStatus PosterVoteUp(string User_ID, string Poster_id)
+        public ConnectStatus PosterVoteUp(string User_ID, string Poster_id,string User_token)
         {
             try
             {
-                voteAction(User_ID, Poster_id, VoteAction.VoteCancle, VoteAction.VoteUp);
-                return ConnectStatus.ActionSuccess;
+                if (loginCheck.TokenCheck(int.Parse(User_ID), User_token))
+                {
+                    voteAction(User_ID, Poster_id, VoteAction.VoteCancle, VoteAction.VoteUp);
+                    return ConnectStatus.ActionSuccess;
+                }
+                else
+                {
+                    return ConnectStatus.ActionUnAuthorize;
+                }
             }
             catch (Exception e){
                 WcfLog.Log(logLevel.Error,e);
@@ -207,13 +221,19 @@ namespace WcfServiceForIOS
             }
             
         }
-        public ConnectStatus PosterVoteCancel(string User_ID, string Poster_id)
+        public ConnectStatus PosterVoteCancel(string User_ID, string Poster_id,string User_token)
         {
 
             try
             {
-                voteCancel(User_ID, Poster_id, VoteAction.VoteCancle);
-                return ConnectStatus.ActionSuccess;
+                if (loginCheck.TokenCheck(int.Parse(User_ID), User_token))
+                {
+                    voteCancel(User_ID, Poster_id, VoteAction.VoteCancle);
+                    return ConnectStatus.ActionSuccess;
+                }
+                else {
+                    return ConnectStatus.ActionUnAuthorize;
+                }
             }
             catch (Exception e)
             {
@@ -221,17 +241,48 @@ namespace WcfServiceForIOS
                 return ConnectStatus.ActionFailed;
             }
         }
-        public ConnectStatus PosterVoteDown(string User_ID, string Poster_id)
+        public ConnectStatus PosterVoteDown(string User_ID, string Poster_id,string User_token)
         {
             try
             {
-                voteAction(User_ID, Poster_id, VoteAction.VoteCancle, VoteAction.VoteDown);
-                return ConnectStatus.ActionSuccess;
+                if (loginCheck.TokenCheck(int.Parse(User_ID), User_token))
+                {
+                    voteAction(User_ID, Poster_id, VoteAction.VoteCancle, VoteAction.VoteDown);
+                    return ConnectStatus.ActionSuccess;
+                }
+                else {
+                    return ConnectStatus.ActionUnAuthorize;
+                }
             }
             catch (Exception e)
             {
                 WcfLog.Log(logLevel.Error, e);
                 return ConnectStatus.ActionFailed;
+            }
+        }
+
+        public List<UserVotePoster> UserVoteList(string User_ID, string User_token)
+        {
+           // User_ID = "24";
+           // User_token = "a37f9e5efbd34856aef656e36676e474";
+            try
+            {
+                if (loginCheck.TokenCheck(int.Parse(User_ID), User_token))
+                {
+                    sqlparameters r_user_id = new sqlparameters("p_user_id",User_ID);
+                    List<sqlparameters> paras=new List<sqlparameters> {r_user_id};
+                    DataConn conn = new DataConn();
+                    DataTable dt = conn.StroedGetTable("pkg_get_user_vote_list", paras);
+                    List<UserVotePoster> uservotelist = DataTableToObject<UserVotePoster>.ToT(dt);
+                    return uservotelist;
+                }
+                else {
+                    return null;
+                }
+            }
+            catch (Exception e) {
+                WcfLog.Log(logLevel.Error,e);
+                return null;
             }
         }
 

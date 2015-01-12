@@ -9,7 +9,8 @@ namespace WcfServiceForIOS.Model
     public enum ConnectStatus
     {
         ActionFailed=0,
-        ActionSuccess
+        ActionSuccess,
+        ActionUnAuthorize
         
     }
 

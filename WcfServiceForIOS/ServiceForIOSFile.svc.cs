@@ -24,26 +24,35 @@ namespace WcfServiceForIOS
         {
 
             MultipartParser parser = new MultipartParser(request);
-            string mapFilePath = "E";
+            string mapFilePath = "0";
             if (parser != null && parser.Success) {
                 //WcfLog.Log(parser.Filename+"|"+parser.ContentType);
                 byte[] imagebyte = parser.FileContents;
-                string filenamepath = MapPath.GetfileName(parser.Filename, userPhotoPath);
+                string[] result = GetTokenAndFileName(parser.Filename);
+                //result[0] token result[1] is yyyymmddhhmmss_id.jpg
+                string filenamepath = MapPath.GetfileName(result[1], userPhotoPath);
                
                 FileStream file = null;
                 try
                 {
-                    file = new FileStream(filenamepath, FileMode.Create, FileAccess.Write, FileShare.None);
-                    file.Write(imagebyte, 0, imagebyte.Length);
-                    string userid = GetIdFromFilename(parser.Filename);
-                    mapFilePath = userPhotoPath + @"/" + parser.Filename;
-                    UpdateUserPhotoUrl(mapFilePath,userid);
-                    WcfLog.Log("success: "+filenamepath);
-                    return mapFilePath;
+                    string userid = GetIdFromFilename(result[1]);
+                    if (loginCheck.TokenCheck(int.Parse(userid), result[0]))//token check
+                    {
+                        file = new FileStream(filenamepath, FileMode.Create, FileAccess.Write, FileShare.None);
+                        file.Write(imagebyte, 0, imagebyte.Length);
+                        mapFilePath = userPhotoPath + @"/" + result[1];
+                        UpdateUserPhotoUrl(mapFilePath, userid);
+                        WcfLog.Log("success: " + filenamepath);
+                        return mapFilePath;
+                    }
+                    else {
+                        WcfLog.Log("authorize failed"+parser.Filename);
+                        return "2";
+                    }
                 }
                 catch (Exception e)
                 {
-
+                
                     WcfLog.Log(logLevel.Error, e);                    
                 }
                 finally {
@@ -81,7 +90,24 @@ namespace WcfServiceForIOS
             }
            
         }
-
+        /// <summary>
+        /// filename like "81fc9a62957944fbb36ad2690b520784_20150107190946_36.jpg";,[0] is token [1] is filename;
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        public string[] GetTokenAndFileName(string filename) {
+            filename = "a37f9e5efbd34856aef656e36676e474_20150112012844_24.jpg";
+            string[] result = new string[2];
+            Regex re =new Regex(@"(\w+)_(\d+_\d+\.\w+)");
+            Match t = re.Match(filename);
+            if (t.Success) {
+                result[0]=t.Groups[1].Value.Trim();
+                result[1] = t.Groups[2].Value.Trim();
+                return result;
+                
+            }
+            return result;
+        }
 
 
         #endregion

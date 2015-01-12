@@ -74,35 +74,41 @@ namespace WcfServiceForIOS
         #region---the vote up and vote down
         [OperationContract]
         [WebInvoke(
-            Method = "Get",
+            Method = "GET",
             BodyStyle = WebMessageBodyStyle.Wrapped,
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json,
-            UriTemplate = "PosterVoteUp/{User_ID}/{Poster_id}"
+            UriTemplate = "PosterVoteUp/{User_ID}/{Poster_id}/{User_token}"
             )]
-        ConnectStatus PosterVoteUp(string User_ID, string Poster_id);
+        ConnectStatus PosterVoteUp(string User_ID, string Poster_id,string User_token);
 
         [OperationContract]
         [WebInvoke(
-            Method = "Get",
+            Method = "GET",
             BodyStyle = WebMessageBodyStyle.Wrapped,
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json,
-            UriTemplate = "PosterVoteCancel/{User_ID}/{Poster_id}"
+            UriTemplate = "PosterVoteCancel/{User_ID}/{Poster_id}/{User_token}"
             )]
-        ConnectStatus PosterVoteCancel(string User_ID, string Poster_id);
+        ConnectStatus PosterVoteCancel(string User_ID, string Poster_id,string User_token);
 
         [OperationContract]
         [WebInvoke(
-            Method = "Get",
+            Method = "GET",
             BodyStyle = WebMessageBodyStyle.Wrapped,
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json,
-            UriTemplate = "PosterVoteDown/{User_ID}/{Poster_id}"
+            UriTemplate = "PosterVoteDown/{User_ID}/{Poster_id}/{User_token}"
             )]
-        ConnectStatus PosterVoteDown(string User_ID, string Poster_id);
+        ConnectStatus PosterVoteDown(string User_ID, string Poster_id,string User_token);
 
-
+        //stop to use this
+        [OperationContract]
+        [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Wrapped,
+                RequestFormat = WebMessageFormat.Json,
+                ResponseFormat = WebMessageFormat.Json,
+                UriTemplate = "UserVote")]
+        List<UserVotePoster> UserVoteList(string User_ID,string User_token);
         #endregion
     }
 }

@@ -35,5 +35,9 @@ namespace WcfServiceForIOS.Model
         public string PosterID { get; set; }
         [DataMember]
         public string UserPhoto { get; set; }
+        [DataMember]
+        public string Token { get;set;}
+        [DataMember]
+        public int VoteFlag { get; set; }
     }
 }

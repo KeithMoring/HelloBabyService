@@ -127,7 +127,8 @@ namespace WcfServiceForIOS
                 else {
                     List<sqlparameters> parametersLogin = new List<sqlparameters>();
                     sqlparameters p_user_id = new sqlparameters("p_user_id", result);
-                    parametersLogin.Add(p_user_id);
+                    sqlparameters p_token = new sqlparameters("p_token",Guid.NewGuid().ToString("N"));
+                    parametersLogin.AddParas(p_user_id,p_token);
                     DataTable dt = con.StroedGetTable("PKG_Get_Login_User", parametersLogin);
                     Users user = DataTableToObject<Users>.ToT(dt)[0];
                     return user;
